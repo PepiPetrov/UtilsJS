@@ -9,7 +9,7 @@ export class AddonManager {
     return Array.from(this.addonClasses.entries());
   }
 
-  public addAddon(addon: any, name: string): void {
+  public addAddon(addon: any, name: string = addon.name): void {
     const instance = new addon();
     this.addInstanceProperties(instance);
     this.addons.set(name, instance);
@@ -44,7 +44,7 @@ export class AddonManager {
 
   private removeInstanceProperties(instance: any): void {
     for (const prop in instance) {
-      this.removeProperty(prop);
+      delete this[prop];
     }
   }
 
@@ -82,9 +82,5 @@ export class AddonManager {
       configurable: true,
       enumerable: true,
     });
-  }
-
-  private removeProperty(name: string): void {
-    delete this[name];
   }
 }

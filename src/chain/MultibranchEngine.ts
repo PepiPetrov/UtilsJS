@@ -7,7 +7,6 @@ export class MultibranchEngine<T> {
       {
         fns: [],
         middlewares: [],
-        nestedBranches: [],
         errHandler: console.error,
         priority: 1,
         whenCondition: _ => true,
@@ -15,38 +14,38 @@ export class MultibranchEngine<T> {
     ],
   ]);
   public context: Map<any, any> = new Map();
-  private cacheEnabled = false;
   public cache: LRUCache<string, any>;
+  private cacheEnabled = false;
 
   constructor(maxItemsInCache: number = 15) {
     this.cache = new LRUCache({ max: maxItemsInCache });
   }
 
-  addToBranch(
-    name: string,
-    fn: ChainedFunction<any, any>,
-    createBranchIfNotExisting = false,
-    branchPriority = Infinity
-  ) {
-    if (!this.branches.has(name) && !createBranchIfNotExisting) {
+  addToBranch(name: string, fn: ChainedFunction<any, any>) {
+    if (!this.branches.has(name)) {
       throw new Error(`Branch ${name} does not exist`);
-    }
-
-    if (!this.branches.has(name) && createBranchIfNotExisting) {
-      this.branches.set(name, {
-        fns: [],
-        middlewares: [],
-        nestedBranches: [],
-        priority: branchPriority,
-        errHandler: console.error,
-        whenCondition: _ => true,
-      });
     }
 
     const branch = this.branches.get(name)!;
     branch.fns.push(fn);
 
     this.branches.set(name, branch);
+
+    return this;
+  }
+
+  addBranch(name: string, branchPriority: number) {
+    if (!this.branches.has(name)) {
+      this.branches.set(name, {
+        fns: [],
+        middlewares: [],
+        priority: branchPriority,
+        errHandler: console.error,
+        whenCondition: _ => true,
+      });
+    } else {
+      throw new Error(`Branch ${name} already exists`);
+    }
 
     return this;
   }
@@ -79,7 +78,7 @@ export class MultibranchEngine<T> {
       return x;
     };
 
-    this.addToBranch(name, logger, false, this.branches.get(name)!.priority);
+    this.addToBranch(name, logger);
 
     return this;
   }
@@ -148,9 +147,11 @@ export class MultibranchEngine<T> {
 
   async runAll(value: T, passMainResultToBranches: boolean = false) {
     const mainRes = await this.runBranch('main', value);
-    const names: string[] = Array.from(this.branches.keys()).filter(
-      name => name !== 'main'
-    );
+    const names: string[] = Array.from(this.branches.keys())
+      .filter(name => name !== 'main')
+      .sort((a, b) => {
+        return this.branches.get(a)!.priority - this.branches.get(b)!.priority;
+      });
 
     const resultsMap: Record<string, T> = {};
     names.map(async name => {

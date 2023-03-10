@@ -1,21 +1,20 @@
 export class SinglebranchEngine<T> {
-  public branch: Branch<T> = {
+  private branch: Branch<T> = {
     fns: [],
     middlewares: [],
-    nestedBranches: [],
     errHandler: console.error,
     priority: 1,
     whenCondition: _ => true,
   };
   public context: Map<any, any> = new Map();
 
-  addToBranch(fn: ChainedFunction<any, any>) {
+  add(fn: ChainedFunction<any, any>) {
     this.branch.fns.push(fn);
 
     return this;
   }
 
-  setBranchWhenCondition(condition: ConditionFn) {
+  setWhenCondition(condition: ConditionFn) {
     this.branch.whenCondition = condition;
 
     return this;
@@ -27,7 +26,7 @@ export class SinglebranchEngine<T> {
       return x;
     };
 
-    this.addToBranch(logger);
+    this.add(logger);
 
     return this;
   }
@@ -38,7 +37,7 @@ export class SinglebranchEngine<T> {
     return this;
   }
 
-  useInBrach(middleware: ChainedFunction<T, T>) {
+  use(middleware: ChainedFunction<T, T>) {
     this.branch.middlewares.push(middleware);
 
     return this;
