@@ -54,5 +54,6 @@
   },
   "dependencies": {
     "lru-cache": "^7.18.3"
-  }
+  },
+  "repository": "https://github.com/PepiPetrov/UtilsJS"
 }
