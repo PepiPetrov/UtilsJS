@@ -101,7 +101,7 @@ export class Trie {
     }
 
     let node = this.root;
-    const stack: [TrieNode, string][] = [[this.root, '']];
+    const stack: any[] = [[this.root, '']];
 
     for (const char of word) {
       stack.push([node, char]);
@@ -152,7 +152,7 @@ export class Trie {
       node.count = childNode.count;
     } else {
       // Recursively compress all child nodes
-      for (const [_, childNode] of Array.from(node.children)) {
+      for (const [, childNode] of Array.from(node.children)) {
         this.compressNode(childNode);
       }
     }

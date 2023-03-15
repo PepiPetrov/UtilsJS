@@ -46,7 +46,7 @@ export class EventEmitter {
       }
     });
 
-    if (listenerResults.filter(x => x).length == 0) {
+    if (listenerResults.filter(x => x).length === 0) {
       return;
     } else {
       return listenerResults.filter(x => x);

@@ -1,4 +1,4 @@
-export class AddonManager<T extends { new(...args: any[]): any }> {
+export class AddonManager<T extends { new (...args: any[]): any }> {
   protected addons: Map<string, InstanceType<T>> = new Map();
   protected addonClasses: Map<string, T> = new Map();
   protected dependencies: Array<any> = [];
