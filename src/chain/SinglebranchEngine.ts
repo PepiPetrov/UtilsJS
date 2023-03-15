@@ -1,12 +1,8 @@
+import { createEmptyBranch } from './utils';
+
 export class SinglebranchEngine<T> {
-  private branch: Branch<T> = {
-    fns: [],
-    middlewares: [],
-    errHandler: console.error,
-    priority: 1,
-    whenCondition: _ => true,
-  };
-  public context: Map<any, any> = new Map();
+  private readonly branch: Branch<T> = createEmptyBranch();
+  public readonly context: Map<any, any> = new Map();
 
   add(fn: ChainedFunction<any, any>) {
     this.branch.fns.push(fn);

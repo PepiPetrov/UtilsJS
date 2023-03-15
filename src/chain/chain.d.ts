@@ -6,6 +6,6 @@ declare interface Branch<T> {
   fns: ChainedFunction<T, T>[];
   middlewares: ChainedFunction<T, T>[];
   errHandler: ErrorHandlerFunction;
-  whenCondition: ConditionFn;
   priority: number;
+  whenCondition: ConditionFn;
 }

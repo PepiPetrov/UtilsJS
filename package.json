@@ -46,14 +46,13 @@
   ],
   "devDependencies": {
     "@size-limit/preset-small-lib": "^8.2.4",
+    "@types/node": "^18.15.3",
     "husky": "^8.0.3",
     "size-limit": "^8.2.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.5.0",
     "typescript": "^4.9.5"
   },
-  "dependencies": {
-    "lru-cache": "^8.0.0"
-  },
+  "dependencies": {},
   "repository": "https://github.com/PepiPetrov/UtilsJS"
 }

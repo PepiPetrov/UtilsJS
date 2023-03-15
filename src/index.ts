@@ -1,2 +1,5 @@
 export { AddonManager } from './AddonManager';
-export * from './chain';
+export { EventEmitter } from './EventHandler';
+
+export * as ChainEngines from './chain';
+export * as Cache from './cache'

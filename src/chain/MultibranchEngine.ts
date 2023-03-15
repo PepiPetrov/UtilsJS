@@ -1,27 +1,19 @@
-import LRUCache from 'lru-cache';
+import { LRUCache } from '../cache/LRUCache';
+import { createEmptyBranch } from './utils';
 
 export class MultibranchEngine<T> {
-  public branches: Map<string, Branch<T>> = new Map([
-    [
-      'main',
-      {
-        fns: [],
-        middlewares: [],
-        errHandler: console.error,
-        priority: 1,
-        whenCondition: _ => true,
-      },
-    ],
+  public readonly branches: Map<string, Branch<T>> = new Map([
+    ['main', createEmptyBranch<T>()],
   ]);
-  public context: Map<any, any> = new Map();
-  public cache: LRUCache<string, any>;
+  public readonly context: Map<any, any> = new Map();
+  private readonly cache: LRUCache<string, any>;
   private cacheEnabled = false;
 
-  constructor(maxItemsInCache: number = 15) {
-    this.cache = new LRUCache({ max: maxItemsInCache });
+  constructor(cacheSize: number) {
+    this.cache = new LRUCache(cacheSize);
   }
 
-  addToBranch(name: string, fn: ChainedFunction<any, any>) {
+  addToBranch(name: string, fn: ChainedFunction<T, any>) {
     if (!this.branches.has(name)) {
       throw new Error(`Branch ${name} does not exist`);
     }
@@ -36,13 +28,7 @@ export class MultibranchEngine<T> {
 
   addBranch(name: string, branchPriority: number) {
     if (!this.branches.has(name)) {
-      this.branches.set(name, {
-        fns: [],
-        middlewares: [],
-        priority: branchPriority,
-        errHandler: console.error,
-        whenCondition: _ => true,
-      });
+      this.branches.set(name, createEmptyBranch<T>(branchPriority));
     } else {
       throw new Error(`Branch ${name} already exists`);
     }
@@ -145,22 +131,29 @@ export class MultibranchEngine<T> {
     return result;
   }
 
-  async runAll(value: T, passMainResultToBranches: boolean = false) {
+  async runAll(
+    value: T,
+    passMainResultToBranches = false
+  ): Promise<Record<string, T>> {
     const mainRes = await this.runBranch('main', value);
-    const names: string[] = Array.from(this.branches.keys())
+
+    const branchNames = Array.from(this.branches.keys())
       .filter(name => name !== 'main')
       .sort((a, b) => {
         return this.branches.get(a)!.priority - this.branches.get(b)!.priority;
       });
 
     const resultsMap: Record<string, T> = {};
-    names.map(async name => {
-      const res = await this.runBranch(
-        name,
-        passMainResultToBranches ? mainRes : value
-      );
-      resultsMap[name] = res;
-    });
+
+    await Promise.all(
+      branchNames.map(async name => {
+        const res = await this.runBranch(
+          name,
+          passMainResultToBranches ? mainRes : value
+        );
+        resultsMap[name] = res;
+      })
+    );
 
     return resultsMap;
   }
