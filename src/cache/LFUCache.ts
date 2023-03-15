@@ -1,8 +1,8 @@
 export class LFUCache<K, V> {
-  private capacity: number;
-  private cache: Map<K, CacheNode<K, V>>;
-  private frequencyList: Map<number, Set<CacheNode<K, V>>>;
-  private minFrequency: number;
+  protected capacity: number;
+  protected cache: Map<K, CacheNode<K, V>>;
+  protected frequencyList: Map<number, Set<CacheNode<K, V>>>;
+  protected minFrequency: number;
 
   constructor(capacity: number) {
     this.capacity = capacity;
@@ -15,7 +15,7 @@ export class LFUCache<K, V> {
     return this.cache.size;
   }
 
-  private increaseFrequency(node: CacheNode<K, V>): void {
+  protected increaseFrequency(node: CacheNode<K, V>): void {
     const frequency = node.frequency;
     const nodes = this.frequencyList.get(frequency) as Set<CacheNode<K, V>>;
     nodes.delete(node);
@@ -95,5 +95,15 @@ export class LFUCache<K, V> {
     this.cache.clear();
     this.frequencyList.clear();
     this.minFrequency = 0;
+  }
+
+  batchSet(items: any[], batchSize: number = 100) {
+    const numBatches = Math.ceil(items.length / batchSize);
+    for (let i = 0; i < numBatches; i++) {
+      const batchStart = i * batchSize;
+      const batchEnd = Math.min((i + 1) * batchSize, items.length);
+      const batchItems = items.slice(batchStart, batchEnd);
+      batchItems.forEach(([key, value]) => this.set(key, value));
+    }
   }
 }

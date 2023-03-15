@@ -6,8 +6,8 @@ export class MultibranchEngine<T> {
     ['main', createEmptyBranch<T>()],
   ]);
   public readonly context: Map<any, any> = new Map();
-  private readonly cache: LRUCache<string, any>;
-  private cacheEnabled = false;
+  protected readonly cache: LRUCache<string, any>;
+  protected cacheEnabled = false;
 
   constructor(cacheSize: number) {
     this.cache = new LRUCache(cacheSize);
@@ -158,7 +158,7 @@ export class MultibranchEngine<T> {
     return resultsMap;
   }
 
-  private addToCache(key: string, value: any) {
+  protected addToCache(key: string, value: any) {
     if (this.cacheEnabled) {
       this.cache.set(key, value);
     }

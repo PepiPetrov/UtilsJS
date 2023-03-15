@@ -1,7 +1,7 @@
 import { createEmptyBranch } from './utils';
 
 export class SinglebranchEngine<T> {
-  private readonly branch: Branch<T> = createEmptyBranch();
+  protected readonly branch: Branch<T> = createEmptyBranch();
   public readonly context: Map<any, any> = new Map();
 
   add(fn: ChainedFunction<any, any>) {
@@ -39,7 +39,7 @@ export class SinglebranchEngine<T> {
     return this;
   }
 
-  async runAll(value: T) {
+  async run(value: T) {
     if (!this.branch?.whenCondition(value)) {
       return value;
     }

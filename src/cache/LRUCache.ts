@@ -1,21 +1,21 @@
 export class LRUCache<K, V> {
-  private capacity: number;
-  private cache: Map<K, V>;
+  protected capacity: number;
+  protected cache: Map<K, V>;
 
   constructor(capacity: number) {
     this.capacity = capacity;
     this.cache = new Map();
   }
 
-  get size(): number {
+  get size() {
     return this.cache.size;
   }
 
-  keysIterator(): IterableIterator<K> {
+  keysIterator() {
     return this.cache.keys();
   }
 
-  valuesIterator(): IterableIterator<V> {
+  valuesIterator() {
     return this.cache.values();
   }
 
@@ -23,11 +23,11 @@ export class LRUCache<K, V> {
     return this.cache.entries();
   }
 
-  keys(): K[] {
+  keys() {
     return Array.from(this.keysIterator());
   }
 
-  values(): V[] {
+  values() {
     return Array.from(this.valuesIterator());
   }
 
@@ -35,7 +35,7 @@ export class LRUCache<K, V> {
     return Array.from(this.entriesIterator());
   }
 
-  forEach(callbackFn: (value: V, key: K, map: Map<K, V>) => void): void {
+  forEach(callbackFn: (value: V, key: K, map: Map<K, V>) => void) {
     this.cache.forEach(callbackFn);
   }
 
@@ -49,7 +49,7 @@ export class LRUCache<K, V> {
     return value;
   }
 
-  set(key: K, value: V): void {
+  set(key: K, value: V) {
     if (this.cache.has(key)) {
       this.cache.delete(key);
     } else if (this.cache.size >= this.capacity) {
@@ -59,15 +59,25 @@ export class LRUCache<K, V> {
     this.cache.set(key, value);
   }
 
-  has(key: K): boolean {
+  has(key: K) {
     return this.cache.has(key);
   }
 
-  delete(key: K): boolean {
+  delete(key: K) {
     return this.cache.delete(key);
   }
 
-  clear(): void {
+  clear() {
     this.cache.clear();
+  }
+
+  batchSet(items: any[], batchSize: number = 100) {
+    const numBatches = Math.ceil(items.length / batchSize);
+    for (let i = 0; i < numBatches; i++) {
+      const batchStart = i * batchSize;
+      const batchEnd = Math.min((i + 1) * batchSize, items.length);
+      const batchItems = items.slice(batchStart, batchEnd);
+      batchItems.forEach(([key, value]) => this.set(key, value));
+    }
   }
 }

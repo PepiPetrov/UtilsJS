@@ -1,7 +1,7 @@
-export class AddonManager {
-  private addons: Map<string, any> = new Map();
-  private addonClasses: Map<string, any> = new Map();
-  private requiredAddons: Array<any> = [];
+export class AddonManager<T extends { new(...args: any[]): any }> {
+  protected addons: Map<string, InstanceType<T>> = new Map();
+  protected addonClasses: Map<string, T> = new Map();
+  protected dependencies: Array<any> = [];
 
   [key: string]: any;
 
@@ -14,7 +14,7 @@ export class AddonManager {
     this.addInstanceProperties(instance);
     this.addons.set(name, instance);
     this.addonClasses.set(name, addon);
-    this.addRequiredAddons(instance);
+    this.addDependencies(instance);
   }
 
   public removeAddon(name: string): void {
@@ -23,15 +23,15 @@ export class AddonManager {
     this.removeInstanceProperties(instance);
     this.addons.delete(name);
     this.addonClasses.delete(name);
-    this.removeRequiredAddons(instance);
-    this.addRequiredAddons(this.requiredAddons);
+    this.removeDependencies(instance);
+    this.addDependencies(this.dependencies);
   }
 
   public getAddon(name: string): any {
     return this.addonClasses.get(name);
   }
 
-  private addInstanceProperties(instance: any): void {
+  protected addInstanceProperties(instance: any): void {
     for (const prop in instance) {
       const descriptor = Object.getOwnPropertyDescriptor(instance, prop);
       if (descriptor && typeof descriptor.value === 'function') {
@@ -42,36 +42,36 @@ export class AddonManager {
     }
   }
 
-  private removeInstanceProperties(instance: any): void {
+  protected removeInstanceProperties(instance: any): void {
     for (const prop in instance) {
       delete this[prop];
     }
   }
 
-  private addRequiredAddons(instance: any): void {
-    if (!instance.requiredAddons) return;
-    instance.requiredAddons.forEach((addon: any) => {
+  protected addDependencies(instance: any): void {
+    if (!instance.dependencies) return;
+    instance.dependencies.forEach((addon: any) => {
       const instance = new addon();
       this.addInstanceProperties(instance);
       this.addons.set(addon.name, instance);
       this.addonClasses.set(addon.name, addon);
-      this.addRequiredAddons(instance);
+      this.addDependencies(instance);
     });
   }
 
-  private removeRequiredAddons(instance: any): void {
-    if (!instance.requiredAddons) return;
-    instance.requiredAddons.forEach((addon: any) => {
+  protected removeDependencies(instance: any): void {
+    if (!instance.dependencies) return;
+    instance.dependencies.forEach((addon: any) => {
       const instance = this.addons.get(addon.name);
       if (!instance) return;
       this.removeInstanceProperties(instance);
       this.addons.delete(addon.name);
       this.addonClasses.delete(addon.name);
-      this.removeRequiredAddons(instance);
+      this.removeDependencies(instance);
     });
   }
 
-  private addProperty(name: string, value: any): void {
+  protected addProperty(name: string, value: any): void {
     Object.defineProperty(this, name, {
       get() {
         return value;
