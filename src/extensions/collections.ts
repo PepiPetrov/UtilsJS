@@ -1,4 +1,6 @@
-/*#__PURE__*/
+import isFunction from 'lodash.isfunction';
+import isObject from 'lodash.isobject';
+
 export function partition(
   arr: any[],
   predicate: (val: any) => boolean
@@ -8,7 +10,7 @@ export function partition(
 
   for (let i = 0; i < arr.length; i++) {
     const element = arr[i];
-    if (typeof predicate === 'function') {
+    if (isFunction(predicate)) {
       if (predicate(element)) {
         truthy.push(element);
       } else {
@@ -28,7 +30,7 @@ export function partition(
       } else {
         falsey.push(element);
       }
-    } else if (typeof predicate === 'object') {
+    } else if (isObject(predicate)) {
       const keys = Object.keys(predicate);
       let isTruthy = true;
       for (let j = 0; j < keys.length; j++) {
@@ -49,7 +51,6 @@ export function partition(
   return [truthy, falsey];
 }
 
-/*#__PURE__*/
 export function countBy(collection: any[], iteratee: (val: any) => any) {
   return collection.reduce((result, item) => {
     const key = iteratee(item);

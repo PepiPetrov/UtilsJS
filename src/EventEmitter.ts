@@ -1,3 +1,5 @@
+import isFunction from "lodash.isfunction";
+
 type Listener = (...args: any[]) => any;
 
 interface Event {
@@ -10,7 +12,7 @@ export class EventEmitter {
   private maxListeners = 10;
 
   on(event: string, listener: Listener, namespace?: string): void {
-    if (typeof listener !== 'function') {
+    if (isFunction(listener)) {
       throw new TypeError('listener must be a function');
     }
     const eventName = namespace ? `${namespace}:${event}` : event;

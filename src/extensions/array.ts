@@ -1,4 +1,4 @@
-/*#__PURE__*/
+
 export function chunk(array: any[], chunkSize: number) {
   var chunksArray = [];
   for (var i = 0; i < Math.ceil(array.length / chunkSize); i++) {
@@ -8,7 +8,7 @@ export function chunk(array: any[], chunkSize: number) {
   return chunksArray;
 }
 
-/*#__PURE__*/
+
 export function zip(...arrays: any[]) {
   const maxLength = Math.max(...arrays.map(array => array.length));
   const result = [];
@@ -20,7 +20,7 @@ export function zip(...arrays: any[]) {
   return result;
 }
 
-/*#__PURE__*/
+
 export function zipWith(...arrays: any[]) {
   const iteratee = arrays.pop();
 
