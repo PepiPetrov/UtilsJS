@@ -1,7 +1,7 @@
 export class AddonManager<T extends { new (...args: any[]): any }> {
-  protected addons: Map<string, InstanceType<T>> = new Map();
-  protected addonClasses: Map<string, T> = new Map();
-  protected dependencies: Array<any> = [];
+  public addons: Map<string, InstanceType<T>> = new Map();
+  public addonClasses: Map<string, T> = new Map();
+  public dependencies: Array<any> = [];
 
   [key: string]: any;
 
@@ -24,7 +24,7 @@ export class AddonManager<T extends { new (...args: any[]): any }> {
     this.addons.delete(name);
     this.addonClasses.delete(name);
     this.removeDependencies(instance);
-    this.addDependencies(this.dependencies);
+    this.addDependencies(this);
   }
 
   public getAddon(name: string): any {
