@@ -1,5 +1,3 @@
-import isFunction from 'lodash.isfunction';
-
 export class AddonManager<T extends { new (...args: any[]): any }> {
   public addons: Map<string, InstanceType<T>> = new Map();
   public addonClasses: Map<string, T> = new Map();
@@ -36,7 +34,7 @@ export class AddonManager<T extends { new (...args: any[]): any }> {
   protected addInstanceProperties(instance: any): void {
     for (const prop in instance) {
       const descriptor = Object.getOwnPropertyDescriptor(instance, prop);
-      if (descriptor && isFunction(descriptor.value)) {
+      if (descriptor && typeof descriptor.value === 'function') {
         this.addProperty(prop, descriptor.value.bind(this));
       } else {
         this.addProperty(prop, instance[prop]);

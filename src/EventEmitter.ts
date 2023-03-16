@@ -1,4 +1,4 @@
-import isFunction from 'lodash.isfunction';
+import { isFunction } from './extensions/functions';
 
 type Listener = (...args: any[]) => any;
 
@@ -11,32 +11,25 @@ export class EventEmitter {
   private events: Record<string, Event> = {};
   private maxListeners = 10;
 
-  on(event: string, listener: Listener, namespace?: string): void {
-    if (isFunction(listener)) {
+  public on(event: string, listener: Listener, namespace?: string): void {
+    if (!isFunction(listener)) {
       throw new TypeError('listener must be a function');
     }
     const eventName = namespace ? `${namespace}:${event}` : event;
-    const existingEvent = this.events[eventName];
-    const listenerList = existingEvent?.listeners || [];
-
-    if (existingEvent && listenerList.length >= this.maxListeners) {
-      console.warn(
-        `Possible EventEmitter memory leak detected. ${listenerList.length} listeners added to event ${eventName}. Use emitter.setMaxListeners() to increase limit.`
+    const existingEvent = this.getEvent(eventName);
+    if (existingEvent && existingEvent.listeners.length >= this.maxListeners) {
+      this.warn(
+        `Possible EventEmitter memory leak detected. ${existingEvent.listeners.length} listeners added to event ${eventName}. Use emitter.setMaxListeners() to increase limit.`
       );
       return;
     }
-
     if (!existingEvent) {
-      this.events[eventName] = {
-        namespace,
-        listeners: [],
-      };
+      this.events[eventName] = { listeners: [] };
     }
-
     this.events[eventName].listeners.push(listener);
   }
 
-  emit(event: string, ...args: any[]): void | any[] {
+  public emit(event: string, ...args: any[]): void | any[] {
     const eventName = event.split(':')[0];
     const listeners = this.getListeners(eventName);
     const listenerResults: any[] = [];
@@ -47,33 +40,25 @@ export class EventEmitter {
         this.emit('error', error);
       }
     });
-
-    if (listenerResults.filter(x => x).length === 0) {
-      return;
-    } else {
-      return listenerResults.filter(x => x);
-    }
+    return listenerResults.filter(x => x) || undefined;
   }
 
-  off(event: string, listener?: Listener, namespace?: string): void {
+  public off(event: string, listener?: Listener, namespace?: string): void {
     const eventName = namespace ? `${namespace}:${event}` : event;
-    const existingEvent = this.events[eventName];
-
+    const existingEvent = this.getEvent(eventName);
     if (!existingEvent) {
       return;
     }
-
     if (!listener) {
       delete this.events[eventName];
-      return;
+    } else {
+      existingEvent.listeners = existingEvent.listeners.filter(
+        l => l !== listener
+      );
     }
-
-    existingEvent.listeners = existingEvent.listeners.filter(
-      l => l !== listener
-    );
   }
 
-  once(event: string, listener: Listener, namespace?: string): void {
+  public once(event: string, listener: Listener, namespace?: string): void {
     const wrappedListener = (...args: any[]) => {
       listener(...args);
       this.off(event, wrappedListener, namespace);
@@ -81,23 +66,31 @@ export class EventEmitter {
     this.on(event, wrappedListener, namespace);
   }
 
-  setMaxListeners(n: number): void {
+  public setMaxListeners(n: number): void {
     if (typeof n !== 'number' || n < 0) {
       throw new TypeError('n must be a positive number');
     }
     this.maxListeners = n;
   }
 
-  removeAllListeners(event: string, namespace?: string): void {
+  public removeAllListeners(event: string, namespace?: string): void {
     const eventName = namespace ? `${namespace}:${event}` : event;
     delete this.events[eventName];
+  }
+
+  private warn(message: string): void {
+    console.warn(message);
+  }
+
+  private getEvent(eventName: string): Event | undefined {
+    return this.events[eventName];
   }
 
   private getListeners(eventName: string): Listener[] {
     const listeners: Listener[] = [];
     for (const key in this.events) {
       if (key === eventName || key.startsWith(eventName + ':')) {
-        const event = this.events[key];
+        const event = this.getEvent(key);
         if (event) {
           listeners.push(...event.listeners);
         }

@@ -1,4 +1,4 @@
-import { AddonManager } from '../dist';
+import { AddonManager } from '../src';
 
 class TestAddon {
   testProp: string;

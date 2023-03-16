@@ -1,4 +1,4 @@
-import { Strings } from '../../dist';
+import { Strings } from '../../src';
 
 const { runLengthEncode, runLengthDecode } = Strings.RLE;
 

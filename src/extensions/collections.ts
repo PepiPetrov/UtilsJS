@@ -1,4 +1,3 @@
-import isFunction from 'lodash.isfunction';
 import isObject from 'lodash.isobject';
 
 export function partition(
@@ -10,7 +9,7 @@ export function partition(
 
   for (let i = 0; i < arr.length; i++) {
     const element = arr[i];
-    if (isFunction(predicate)) {
+    if (typeof predicate === 'function') {
       if (predicate(element)) {
         truthy.push(element);
       } else {

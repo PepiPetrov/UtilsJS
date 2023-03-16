@@ -14,3 +14,7 @@ export function debounce<T extends (...args: any[]) => void>(
     }, delay);
   };
 }
+
+export function isFunction(val: any) {
+  return typeof val === 'function';
+}
