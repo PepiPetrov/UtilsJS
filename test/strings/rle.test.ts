@@ -1,6 +1,6 @@
-import { Funcs } from '../../../src/';
+import { Strings } from '../../dist';
 
-const { runLengthEncode, runLengthDecode } = Funcs.Strings.RLE;
+const { runLengthEncode, runLengthDecode } = Strings.RLE;
 
 describe('rleEncode', () => {
   it('should return an empty string for an empty string input', () => {

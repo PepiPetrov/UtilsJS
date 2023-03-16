@@ -163,7 +163,7 @@ export class Trie {
     return JSON.stringify(obj);
   }
 
-  public static deserialize(str: string) {
+  public static deserialize(input: string) {
     function convertObjectToMap(obj: any) {
       const node = new TrieNode();
       node.isWord = obj.isWord;
@@ -173,7 +173,7 @@ export class Trie {
       }
       return node;
     }
-    const obj = JSON.parse(str);
+    const obj = JSON.parse(input);
     const trie = new Trie();
     trie.root = convertObjectToMap(obj);
     return trie;
