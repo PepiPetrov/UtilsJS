@@ -1,4 +1,4 @@
-import isFunction from "lodash.isfunction";
+import isFunction from 'lodash.isfunction';
 
 type Listener = (...args: any[]) => any;
 
