@@ -1,6 +1,9 @@
 type ConversionFactor = Map<string, number | Abbreviations>;
 type Abbreviations = Map<string, string>;
-type ConversionFactors = Map<string, ConversionFactor & { abbreviations: Abbreviations }>;
+type ConversionFactors = Map<
+  string,
+  ConversionFactor & { abbreviations: Abbreviations }
+>;
 
 export class UnitConversion {
   private static conversionFactors: ConversionFactors = new Map();
@@ -12,14 +15,21 @@ export class UnitConversion {
     abbreviations?: Abbreviations
   ) {
     if (!this.conversionFactors.has(type)) {
+      //@ts-ignore
       this.conversionFactors.set(type, { abbreviations: new Map() });
     }
 
     this.conversionFactors.get(type)?.set(unit, factor);
 
     if (abbreviations) {
-      const existingAbbreviations = this.conversionFactors.get(type)?.abbreviations || new Map();
-      this.conversionFactors.get(type)?.set('abbreviations', new Map([...existingAbbreviations, ...abbreviations]));
+      const existingAbbreviations =
+        this.conversionFactors.get(type)?.abbreviations || new Map();
+      this.conversionFactors
+        .get(type)
+        ?.set(
+          'abbreviations',
+          new Map([...existingAbbreviations, ...abbreviations])
+        );
     }
   }
 
@@ -31,7 +41,10 @@ export class UnitConversion {
     }
 
     for (const [unit, factor] of conversionFactor.entries()) {
-      if (unit === value || factor.abbreviations?.get(value) === unit) {
+      if (
+        unit === value ||
+        (factor as any).abbreviations?.get(value) === unit
+      ) {
         return unit;
       }
     }
@@ -74,6 +87,6 @@ export class UnitConversion {
       }
     }
 
-    return Array.isArray(to) ? output : output.get(to);
+    return Array.isArray(to) ? output : output.get(to)!;
   }
 }
