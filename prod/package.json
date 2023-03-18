@@ -1,0 +1,16 @@
+{
+  "version": "0.1.2",
+  "license": "MIT",
+  "main": "js-class-utilities.cjs.production.min.js",
+  "typings": "index.d.ts",
+  "engines": {
+    "node": ">=10"
+  },
+  "name": "js-class-utilities",
+  "author": "PepiPetrov",
+  "module": "js-class-utilities.cjs.production.min.js",
+  "dependencies": {
+    "wildcard-match": "^5.1.2"
+  },
+  "repository": "https://github.com/PepiPetrov/UtilsJS"
+}
