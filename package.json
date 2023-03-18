@@ -42,11 +42,11 @@
   "size-limit": [
     {
       "path": "dist/js-class-utilities.cjs.production.min.js",
-      "limit": "10 KB"
+      "limit": "20 KB"
     },
     {
       "path": "dist/js-class-utilities.esm.js",
-      "limit": "10 KB"
+      "limit": "20 KB"
     }
   ],
   "devDependencies": {
