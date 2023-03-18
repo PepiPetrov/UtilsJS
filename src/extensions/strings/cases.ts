@@ -1,4 +1,4 @@
-export function convertToCamelCase(input: string) {
+export function camelCase(input: string) {
   return input
     .replace(/(?:^\w|[A-Z]|\b\w)/g, function(
       word: string,
@@ -9,7 +9,7 @@ export function convertToCamelCase(input: string) {
     .replace(/\s+/g, '');
 }
 
-export function convertToKebabCase(input: string) {
+export function kebabCase(input: string) {
   return input
     .split('')
     .map((letter: string, idx: number) => {
@@ -20,7 +20,7 @@ export function convertToKebabCase(input: string) {
     .join('');
 }
 
-export function convertToSnakeCase(input: string) {
+export function snakeCase(input: string) {
   return input
     .replace(/\W+/g, ' ')
     .split(/ |\B(?=[A-Z])/)
@@ -28,18 +28,18 @@ export function convertToSnakeCase(input: string) {
     .join('_');
 }
 
-export function convertToPascalCase(input: string): string {
+export function pascalCase(input: string): string {
   return input
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join('');
 }
 
-export function convertToTitleCase(input: string): string {
+export function titleCase(input: string): string {
   return input.toLowerCase().replace(/(^|\s)\S/g, match => match.toUpperCase());
 }
 
-export function convertToSwapCase(input: string): string {
+export function swapCase(input: string): string {
   return input
     .split('')
     .map(char => {

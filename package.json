@@ -15,9 +15,11 @@
     "build": "tsdx build",
     "test": "tsdx test",
     "lint": "tsdx lint",
+    "format": "tsdx lint --fix",
     "prepare": "tsdx build",
     "size": "size-limit",
     "analyze": "size-limit --why",
+    "type-coverage": "type-coverage --at-least 90",
     "postinstall": "husky install",
     "prepack": "pinst --disable",
     "postpack": "pinst --enable"
@@ -25,7 +27,7 @@
   "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "type-coverage --at-least 90 && tsdx lint --fix"
     }
   },
   "prettier": {
@@ -36,7 +38,7 @@
   },
   "name": "js-class-utilities",
   "author": "PepiPetrov",
-  "module": "dist/utilsjs.esm.js",
+  "module": "dist/js-class-utilities.esm.js",
   "size-limit": [
     {
       "path": "dist/js-class-utilities.cjs.production.min.js",
@@ -50,17 +52,16 @@
   "devDependencies": {
     "@size-limit/esbuild-why": "^8.2.4",
     "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/lodash.isobject": "^3.0.7",
     "@types/node": "^18.15.3",
     "husky": "^8.0.3",
     "pinst": "^3.0.0",
     "size-limit": "^8.2.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.5.0",
+    "type-coverage": "^2.25.0",
     "typescript": "^5.0.2"
   },
   "dependencies": {
-    "lodash.isobject": "^3.0.2",
     "wildcard-match": "^5.1.2"
   },
   "repository": "https://github.com/PepiPetrov/UtilsJS"

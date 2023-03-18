@@ -1,4 +1,4 @@
-import isObject from 'lodash.isobject';
+import { isObject } from './objects';
 
 export function partition(
   arr: any[],

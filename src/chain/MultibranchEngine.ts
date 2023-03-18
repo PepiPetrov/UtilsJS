@@ -1,4 +1,4 @@
-import { LRUCache } from '../cache/LRUCache';
+import { LRUCache } from '../cache/LRU';
 import { createEmptyBranch } from './utils';
 
 export class MultibranchEngine<T> {

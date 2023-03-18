@@ -1,5 +1,7 @@
+
 export { AddonManager } from './AddonManager';
 export { EventEmitter } from './EventEmitter';
+export { UnitConversion } from './UnitConversion';
 
 export * as ChainEngines from './chain';
 export * as Cache from './cache'

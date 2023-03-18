@@ -99,3 +99,7 @@ export function orderBy<T extends object>(
 
   return sortedItems;
 }
+
+export function isObject(val: any) {
+  return typeof val == 'object' && val;
+}

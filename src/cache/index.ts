@@ -1,2 +1,2 @@
-export { LRUCache } from './LRUCache';
-export { LFUCache } from './LFUCache';
+export { LRUCache } from './LRU';
+export { LFUCache } from './LFU';
