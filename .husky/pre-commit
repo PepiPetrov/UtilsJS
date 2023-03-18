@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-yarn type-coverage && yarn lint --fix && yarn test && yarn build
+yarn type-coverage && yarn lint && yarn test && yarn build

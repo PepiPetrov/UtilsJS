@@ -27,7 +27,7 @@
   "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "type-coverage --at-least 90 && tsdx lint --fix"
+      "pre-commit": "type-coverage --at-least 90 && tsdx lint"
     }
   },
   "prettier": {
