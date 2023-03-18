@@ -1,49 +1,42 @@
-type ConversionFactor = {
-  [key: string]: number | Abbreviations;
-};
-
-type Abbreviations = { [key: string]: string };
-
-type ConversionFactors = {
-  [key: string]: ConversionFactor & {
-    abbreviations: { [key: string]: string };
-  };
-};
+type ConversionFactor = Map<string, number | Abbreviations>;
+type Abbreviations = Map<string, string>;
+type ConversionFactors = Map<string, ConversionFactor & { abbreviations: Abbreviations }>;
 
 export class UnitConversion {
-  private static conversionFactors: ConversionFactors = {};
+  private static conversionFactors: ConversionFactors = new Map();
 
   static addConversionFactor(
     type: string,
     unit: string,
     factor: number,
-    abbreviations?: { [key: string]: string }
+    abbreviations?: Abbreviations
   ) {
-    if (!this.conversionFactors[type]) {
-      this.conversionFactors[type] = {
-        abbreviations: abbreviations || {},
-      };
+    if (!this.conversionFactors.has(type)) {
+      this.conversionFactors.set(type, { abbreviations: new Map() });
     }
-    this.conversionFactors[type][unit] = factor;
+
+    this.conversionFactors.get(type)?.set(unit, factor);
+
     if (abbreviations) {
-      this.conversionFactors[type].abbreviations = {
-        ...this.conversionFactors[type].abbreviations,
-        ...abbreviations,
-      };
+      const existingAbbreviations = this.conversionFactors.get(type)?.abbreviations || new Map();
+      this.conversionFactors.get(type)?.set('abbreviations', new Map([...existingAbbreviations, ...abbreviations]));
     }
   }
 
   static detectInputUnit(value: string, type: string): string {
-    const inputUnit = Object.keys(this.conversionFactors[type]).find(unit => {
-      return (
-        unit === value ||
-        this.conversionFactors[type].abbreviations[value] === unit
-      );
-    });
-    if (!inputUnit) {
-      throw new Error(`Invalid input unit: ${value}`);
+    const conversionFactor = this.conversionFactors.get(type);
+
+    if (!conversionFactor) {
+      throw new Error(`Invalid conversion factor type: ${type}`);
     }
-    return inputUnit;
+
+    for (const [unit, factor] of conversionFactor.entries()) {
+      if (unit === value || factor.abbreviations?.get(value) === unit) {
+        return unit;
+      }
+    }
+
+    throw new Error(`Invalid input unit: ${value}`);
   }
 
   static convert(
@@ -52,29 +45,35 @@ export class UnitConversion {
     value: number,
     type: string,
     roundTo?: number
-  ): number | { [key: string]: number } {
+  ): number | Map<string, number> {
     const fromUnit = this.detectInputUnit(from, type);
     const outputUnits = Array.isArray(to) ? to : [to];
-    const output: { [key: string]: number } = {};
-    outputUnits.forEach(outputUnit => {
+    const output = new Map<string, number>();
+
+    for (const outputUnit of outputUnits) {
       const toUnit = this.detectInputUnit(outputUnit, type);
+      const conversionFactor = this.conversionFactors.get(type);
+
       if (
-        this.conversionFactors[type] &&
-        this.conversionFactors[type][fromUnit] &&
-        this.conversionFactors[type][toUnit]
+        conversionFactor &&
+        conversionFactor.get(fromUnit) &&
+        conversionFactor.get(toUnit)
       ) {
         let result =
-          (value * (this.conversionFactors[type][fromUnit] as number)) /
-          (this.conversionFactors[type][toUnit] as number);
+          (value * (conversionFactor.get(fromUnit) as number)) /
+          (conversionFactor.get(toUnit) as number);
+
         if (roundTo !== undefined) {
           result =
             Math.round(result * Math.pow(10, roundTo)) / Math.pow(10, roundTo);
         }
-        output[outputUnit] = result;
+
+        output.set(outputUnit, result);
       } else {
         throw new Error(`Unsupported conversion from ${from} to ${outputUnit}`);
       }
-    });
-    return Array.isArray(to) ? output : output[to];
+    }
+
+    return Array.isArray(to) ? output : output.get(to);
   }
 }
