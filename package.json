@@ -59,7 +59,7 @@
     "tsdx": "^0.14.1",
     "tslib": "^2.5.0",
     "type-coverage": "^2.25.0",
-    "typescript": "^5.0.2"
+    "typescript": "^5.0.4"
   },
   "dependencies": {
     "wildcard-match": "^5.1.2"
