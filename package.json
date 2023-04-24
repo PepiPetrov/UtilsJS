@@ -52,7 +52,7 @@
   "devDependencies": {
     "@size-limit/esbuild-why": "^8.2.4",
     "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/node": "^18.15.11",
+    "@types/node": "^18.16.0",
     "husky": "^8.0.3",
     "pinst": "^3.0.0",
     "size-limit": "^8.2.4",
