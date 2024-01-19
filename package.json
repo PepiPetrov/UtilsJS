@@ -52,13 +52,13 @@
   "devDependencies": {
     "@size-limit/esbuild-why": "^8.2.4",
     "@size-limit/preset-small-lib": "^8.2.4",
-    "@types/node": "^20.5.7",
+    "@types/node": "^20.11.5",
     "husky": "^8.0.3",
     "pinst": "^3.0.0",
     "size-limit": "^8.2.4",
     "tsdx": "^0.14.1",
     "tslib": "^2.6.2",
-    "type-coverage": "^2.25.0",
+    "type-coverage": "^2.27.1",
     "typescript": "^5.3.3"
   },
   "dependencies": {
